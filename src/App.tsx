@@ -1,23 +1,19 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginPage from "./domain/member/pages/LoginPage";
+import SignupPage from "./domain/member/pages/SignupPage";
+import KakaoCallback from "./domain/member/pages/KakaoCallback";
+import MainPage from "./pages/MainPage";
 
 function App() {
-  const [msg, setMsg] = useState("loading...");
-
-  useEffect(() => {
-    fetch("/api/db/health")
-      .then(res => res.text())
-      .then(data => setMsg(data))
-      .catch(err => {
-        console.error(err);
-        setMsg("백엔드 연결 실패");
-      });
-  }, []);
-
   return (
-    <div>
-      <h1>Frontend ↔ Backend Test</h1>
-      <p>{msg}</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/oauth/kakao" element={<KakaoCallback />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
