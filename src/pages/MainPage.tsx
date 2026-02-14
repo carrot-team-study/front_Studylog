@@ -79,6 +79,15 @@ function MainPage() {
             <h3>알림</h3>
             <p>학습 리마인더를 받으세요</p>
           </div>
+          <div className="feature-card" role="button"
+               onClick={() => navigate("/comm/list")}
+               onKeyDown={(e) => {
+                 if (e.key === "Enter" || e.key === " ") navigate("/comm/list");
+               }}>
+            <div className="feature-icon">✍️</div>
+            <h3>커뮤니티</h3>
+            <p>함께 공부를 해보아요</p>
+          </div>
         </div>
       </main>
     </div>
