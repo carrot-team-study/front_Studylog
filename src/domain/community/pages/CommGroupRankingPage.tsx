@@ -5,6 +5,11 @@ import type { RankRowDto } from "../types/CommGroupType";
 
 type Tab = "likes" | "todos";
 
+type RankingParams = {
+    limit: number;
+    date?: string;
+};
+
 export default function CommGroupRankingPage() {
     const { groupId } = useParams<{ groupId: string }>();
     const navigate = useNavigate();
@@ -25,7 +30,7 @@ export default function CommGroupRankingPage() {
     const fetchRanking = async () => {
         if (gid == null) return;
 
-        setLoading(false);
+        setLoading(true);
         setError(null);
 
         try {
@@ -34,13 +39,13 @@ export default function CommGroupRankingPage() {
                     ? `/api/comm/${gid}/rankings/likes`
                     : `/api/comm/${gid}/rankings/todos`;
 
-            const params: any = { limit };
+            const params: RankingParams = { limit };
             if (tab === "todos" && date.trim()) params.date = date.trim();
 
             const data = await getData<RankRowDto[]>(url, { params });
             setRows(data);
-        } catch (e) {
-            setError(e instanceof Error ? e.message : "랭킹 불러오기 실패");
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "랭킹 불러오기 실패");
             setRows([]);
         } finally {
             setLoading(false);
@@ -48,12 +53,11 @@ export default function CommGroupRankingPage() {
     };
 
     useEffect(() => {
-        fetchRanking();
+        void fetchRanking();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gid, tab, date, limit]);
 
     if (gid == null) return <div style={{ padding: 16 }}>잘못된 groupId</div>;
-
 
     return (
         <div style={{ padding: 16 }}>
@@ -63,16 +67,10 @@ export default function CommGroupRankingPage() {
             </div>
 
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                <button
-                    onClick={() => setTab("likes")}
-                    disabled={tab === "likes"}
-                >
+                <button onClick={() => setTab("likes")} disabled={tab === "likes"}>
                     좋아요 랭킹
                 </button>
-                <button
-                    onClick={() => setTab("todos")}
-                    disabled={tab === "todos"}
-                >
+                <button onClick={() => setTab("todos")} disabled={tab === "todos"}>
                     완료 투두 랭킹
                 </button>
 
@@ -88,11 +86,7 @@ export default function CommGroupRankingPage() {
             {tab === "todos" && (
                 <div style={{ marginTop: 10, display: "flex", gap: 8, alignItems: "center" }}>
                     <span style={{ fontSize: 13, opacity: 0.8 }}>날짜(선택)</span>
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                    />
+                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                     <button onClick={() => setDate("")}>오늘</button>
                 </div>
             )}
@@ -119,9 +113,7 @@ export default function CommGroupRankingPage() {
                                 }}
                             >
                                 <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                                    <div style={{ width: 28, fontWeight: 800 }}>
-                                        {idx + 1}
-                                    </div>
+                                    <div style={{ width: 28, fontWeight: 800 }}>{idx + 1}</div>
                                     <div style={{ fontWeight: 700 }}>{r.nickname}</div>
                                 </div>
 

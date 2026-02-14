@@ -1,5 +1,5 @@
 // domain/global/api/api.ts
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 type ErrorResponse = {
     success: false;
@@ -10,9 +10,18 @@ type ErrorResponse = {
     path: string;
 };
 
+export class ApiError extends Error {
+    code?: string;
+
+    constructor(message: string, code?: string) {
+        super(message);
+        this.name = "ApiError";
+        this.code = code;
+    }
+}
+
 const api = axios.create({
     headers: { "Content-Type": "application/json" },
-    // baseURL 있으면 여기에 넣어
     // baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
@@ -26,15 +35,15 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// ✅ response: 에러코드/메시지 꺼내서 Error 객체에 심기
+// ✅ response: 에러코드/메시지 꺼내서 ApiError로 던지기
 api.interceptors.response.use(
     (res) => res,
-    (error) => {
-        const data = error?.response?.data as Partial<ErrorResponse> | undefined;
-        const msg = data?.message ?? error?.message ?? "네트워크 오류";
-        const err = new Error(msg);
-        (err as any).code = data?.code; // ✅ 여기!
-        throw err;
+    (error: unknown) => {
+        const axiosErr = error as AxiosError<Partial<ErrorResponse>>;
+        const data = axiosErr.response?.data;
+
+        const msg = data?.message ?? axiosErr.message ?? "네트워크 오류";
+        throw new ApiError(msg, data?.code);
     }
 );
 

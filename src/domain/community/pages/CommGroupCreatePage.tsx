@@ -14,6 +14,19 @@ type CommGroupCreateRequest = {
 
 type CommGroupCreateResponse = { groupId: number };
 
+// eslint 규칙 통과 + 현실적으로 많이 나오는 에러 형태들에서 message 추출
+function getErrorMessage(err: unknown): string {
+    if (err && typeof err === "object") {
+        // Error instance
+        if (err instanceof Error) return err.message;
+
+        // { message: "..." } 형태
+        const maybe = err as { message?: unknown };
+        if (typeof maybe.message === "string") return maybe.message;
+    }
+    return "생성 실패";
+}
+
 export default function CommGroupCreatePage() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -50,8 +63,8 @@ export default function CommGroupCreatePage() {
             const res = await postData<CommGroupCreateResponse, CommGroupCreateRequest>("/api/comm", body);
             alert("그룹 생성 완료");
             navigate(`/groups/${res.groupId}`);
-        } catch (e: any) {
-            alert(e?.message ?? "생성 실패");
+        } catch (e: unknown) {
+            alert(getErrorMessage(e));
         } finally {
             setLoading(false);
         }

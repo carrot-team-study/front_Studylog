@@ -8,6 +8,28 @@ import type {
     GroupJoinRequest,
 } from "../types/CommGroupType";
 
+type ApiErrorShape = {
+    code?: string;
+    message?: string;
+};
+
+function getErrorMessage(err: unknown, fallback = "알 수 없는 오류"): string {
+    if (err instanceof Error) return err.message;
+    if (err && typeof err === "object") {
+        const e = err as ApiErrorShape;
+        if (typeof e.message === "string" && e.message.trim()) return e.message;
+    }
+    return fallback;
+}
+
+function getErrorCode(err: unknown): string | undefined {
+    if (err && typeof err === "object") {
+        const e = err as ApiErrorShape;
+        if (typeof e.code === "string") return e.code;
+    }
+    return undefined;
+}
+
 export default function CommGroupDetailPage() {
     const { groupId } = useParams<{ groupId: string }>();
     const navigate = useNavigate();
@@ -36,8 +58,8 @@ export default function CommGroupDetailPage() {
             try {
                 const d = await getData<CommGroupDetailResponse>(`/api/comm/${gid}`);
                 setDetail(d);
-            } catch (e) {
-                setError(e instanceof Error ? e.message : "알 수 없는 오류");
+            } catch (err: unknown) {
+                setError(getErrorMessage(err, "알 수 없는 오류"));
             } finally {
                 setLoading(false);
             }
@@ -55,7 +77,7 @@ export default function CommGroupDetailPage() {
             const list = await getData<GroupMemberLikeDto[]>(`/api/comm/${gid}/members`);
             setMembers(list);
             setIsJoined(true);
-        } catch (e) {
+        } catch {
             setIsJoined(false);
             setMembers([]);
             // 미가입이면 에러문구 굳이 안 띄움
@@ -67,7 +89,7 @@ export default function CommGroupDetailPage() {
 
     useEffect(() => {
         if (gid == null) return;
-        loadMembers();
+        void loadMembers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gid]);
 
@@ -77,12 +99,12 @@ export default function CommGroupDetailPage() {
 
         // 1차: 비번 없이 시도
         try {
-            await postData<number, {}>(`/api/comm/${gid}/join`, {});
+            await postData<number, Record<string, never>>(`/api/comm/${gid}/join`, {});
             await loadMembers();
             return;
-        } catch (e: unknown) {
-            const code = (e as any)?.code as string | undefined;
-            const msg = e instanceof Error ? e.message : "";
+        } catch (err: unknown) {
+            const code = getErrorCode(err);
+            const msg = getErrorMessage(err, "");
 
             const needPassword =
                 code === "GROUP_PASSWORD_REQUIRED" ||
@@ -101,13 +123,13 @@ export default function CommGroupDetailPage() {
         try {
             await postData<number, GroupJoinRequest>(`/api/comm/${gid}/join`, { password });
             await loadMembers();
-        } catch (e: unknown) {
-            const code = (e as any)?.code as string | undefined;
+        } catch (err: unknown) {
+            const code = getErrorCode(err);
             if (code === "GROUP_PASSWORD_MISMATCH") {
                 alert("비밀번호가 틀림");
                 return;
             }
-            alert(e instanceof Error ? e.message : "가입 실패");
+            alert(getErrorMessage(err, "가입 실패"));
         }
     };
 
@@ -119,8 +141,8 @@ export default function CommGroupDetailPage() {
         try {
             await postData<number>(`/api/comm/${gid}/leave`);
             await loadMembers();
-        } catch (e) {
-            alert(e instanceof Error ? e.message : "탈퇴 실패");
+        } catch (err: unknown) {
+            alert(getErrorMessage(err, "탈퇴 실패"));
         }
     };
 
@@ -135,8 +157,8 @@ export default function CommGroupDetailPage() {
         try {
             await postData<LikeToggleResult>(`/api/comm/${gid}/members/${toUserId}/like`);
             await loadMembers();
-        } catch (e) {
-            alert(e instanceof Error ? e.message : "좋아요 실패");
+        } catch (err: unknown) {
+            alert(getErrorMessage(err, "좋아요 실패"));
         }
     };
 
@@ -160,26 +182,16 @@ export default function CommGroupDetailPage() {
             <h2>{detail.groupName}</h2>
 
             {detail.groupIntro ? (
-                <p style={{ marginTop: 8, opacity: 0.85, whiteSpace: "pre-wrap" }}>
-                    {detail.groupIntro}
-                </p>
+                <p style={{ marginTop: 8, opacity: 0.85, whiteSpace: "pre-wrap" }}>{detail.groupIntro}</p>
             ) : (
                 <p style={{ marginTop: 8, opacity: 0.6 }}>소개가 없습니다.</p>
             )}
 
             <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                {isJoined ? (
-                    <button onClick={onLeave}>탈퇴하기</button>
-                ) : (
-                    <button onClick={onJoin}>가입하기</button>
-                )}
+                {isJoined ? <button onClick={onLeave}>탈퇴하기</button> : <button onClick={onJoin}>가입하기</button>}
             </div>
 
-            {isJoined && (
-                <button onClick={() => navigate(`/groups/${gid}/rankings`)}>
-                    랭킹 보기
-                </button>
-            )}
+            {isJoined && <button onClick={() => navigate(`/groups/${gid}/rankings`)}>랭킹 보기</button>}
 
             <div style={{ marginTop: 24 }}>
                 <h3>멤버</h3>
@@ -193,20 +205,13 @@ export default function CommGroupDetailPage() {
                 ) : (
                     <div style={{ display: "grid", gap: 10 }}>
                         {members.map((m) => (
-                            <div
-                                key={m.memberId}
-                                style={{ border: "1px solid #ddd", borderRadius: 12, padding: 12 }}
-                            >
+                            <div key={m.memberId} style={{ border: "1px solid #ddd", borderRadius: 12, padding: 12 }}>
                                 <div style={{ fontWeight: 700 }}>{m.nickname}</div>
-                                <div style={{ marginTop: 6, fontSize: 14 }}>
-                                    좋아요 {m.likeCount}
-                                </div>
+                                <div style={{ marginTop: 6, fontSize: 14 }}>좋아요 {m.likeCount}</div>
 
                                 <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
                                     <button onClick={() => goMemberTodos(m.memberId)}>투두 보기</button>
-                                    <button onClick={() => onToggleLike(m.memberId)}>
-                                        {m.likedByMe ? "좋아요 취소" : "좋아요"}
-                                    </button>
+                                    <button onClick={() => onToggleLike(m.memberId)}>{m.likedByMe ? "좋아요 취소" : "좋아요"}</button>
                                 </div>
                             </div>
                         ))}
