@@ -1,6 +1,6 @@
 // src/pages/MainPage.tsx
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 import { tokenStorage } from '../domain/member/api/memberApi';
 import './MainPage.css';
 
@@ -81,40 +81,54 @@ function MainPage() {
               <h3>타이머</h3>
               <p>공부 시간을 측정하세요</p>
             </div>
-            <div className="feature-card">
-              <div className="feature-icon">📅</div>
-              <h3>플래너</h3>
-              <p>학습 계획을 세우세요</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">📊</div>
-              <h3>통계</h3>
-              <p>학습 기록을 확인하세요</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🔔</div>
-              <h3>알림</h3>
-              <p>학습 리마인더를 받으세요</p>
-            </div>
-            <div
-                className="feature-card"
-                onClick={handleGoReflection}
-                style={{ cursor: 'pointer' }}>
-              <div className="feature-icon">📝</div>
-              <h3>회고</h3>
-              <p>오늘의 공부를 기록하세요</p>
-            </div>
-            <div
-                className="feature-card"
-                onClick={handleGoTodo}
-                style={{ cursor: 'pointer' }}>
-              <div className="feature-icon">📝</div>
-              <h3>투두</h3>
-              <p>오늘의 투두리스트를 계획해보세요</p>
-            </div>
           </div>
-        </main>
-      </div>
+          <NavLink to="/subjects" className="feature-card">
+            <div className="feature-icon">📚</div>
+            <h3>과목 관리</h3>
+            <p>과목을 추가하고 관리하세요</p>
+          </NavLink>
+          <NavLink to="/plans" className="feature-card">
+            <div className="feature-icon">📅</div>
+            <h3>플래너</h3>
+            <p>학습 계획을 세우세요</p>
+          </NavLink>
+          <NavLink to="/statistics" className="feature-card">
+            <div className="feature-icon">📊</div>
+            <h3>통계</h3>
+            <p>학습 기록을 확인하세요</p>
+          </NavLink>
+          <div className="feature-card">
+            <div className="feature-icon">🔔</div>
+            <h3>알림</h3>
+            <p>학습 리마인더를 받으세요</p>
+          </div>
+          <div
+              className="feature-card"
+              onClick={handleGoReflection}
+              style={{ cursor: 'pointer' }}>
+            <div className="feature-icon">📝</div>
+            <h3>회고</h3>
+            <p>오늘의 공부를 기록하세요</p>
+          </div>
+          <div
+              className="feature-card"
+              onClick={handleGoTodo}
+              style={{ cursor: 'pointer' }}>
+            <div className="feature-icon">📝</div>
+            <h3>투두</h3>
+            <p>오늘의 투두리스트를 계획해보세요</p>
+          <div className="feature-card" role="button"
+               onClick={() => navigate("/comm/list")}
+               onKeyDown={(e) => {
+                 if (e.key === "Enter" || e.key === " ") navigate("/comm/list");
+               }}>
+            <div className="feature-icon">✍️</div>
+            <h3>커뮤니티</h3>
+            <p>함께 공부를 해보아요</p>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 
