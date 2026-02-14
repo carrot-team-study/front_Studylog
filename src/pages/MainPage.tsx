@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 import { tokenStorage } from '../domain/member/api/memberApi';
 import './MainPage.css';
 
@@ -64,16 +64,21 @@ function MainPage() {
             <h3>타이머</h3>
             <p>공부 시간을 측정하세요</p>
           </div>
-          <div className="feature-card">
+          <NavLink to="/subjects" className="feature-card">
+            <div className="feature-icon">📚</div>
+            <h3>과목 관리</h3>
+            <p>과목을 추가하고 관리하세요</p>
+          </NavLink>
+          <NavLink to="/plans" className="feature-card">
             <div className="feature-icon">📅</div>
             <h3>플래너</h3>
             <p>학습 계획을 세우세요</p>
-          </div>
-          <div className="feature-card">
+          </NavLink>
+          <NavLink to="/statistics" className="feature-card">
             <div className="feature-icon">📊</div>
             <h3>통계</h3>
             <p>학습 기록을 확인하세요</p>
-          </div>
+          </NavLink>
           <div className="feature-card">
             <div className="feature-icon">🔔</div>
             <h3>알림</h3>
