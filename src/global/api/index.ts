@@ -6,7 +6,8 @@ import axios, {
     type InternalAxiosRequestConfig,
     type AxiosRequestConfig
 } from "axios";
-type ErrorResponse } from "../types/api.ts";
+import { ApiError, type ApiResponse, type ErrorResponse } from "../types/api";
+
 import { MessageUtil } from "../utils/messageUtil.ts";
 import { ErrorCode, HTTP_STATUS_TO_ERROR_CODE } from "../constants/ResponseCode.ts";
 // 기존에 토큰을 관리하던 storage를 가져옵니다.
