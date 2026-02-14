@@ -72,7 +72,7 @@ export const getTimerRecords = async (
  * 수동 기록 추가
  */
 export const addManualTimer = async (data: { subjectId: number; duration: number }): Promise<TimerStopResponse> => {
-    return await api.post("/timer/records/manual", data);
+    return await api.post<TimerStopResponse>("/timer/records/manual", data);
 };
 
 /**

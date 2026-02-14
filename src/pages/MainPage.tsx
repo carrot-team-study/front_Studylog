@@ -1,3 +1,4 @@
+// src/pages/MainPage.tsx
 import { useEffect, useState } from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import { tokenStorage } from '../domain/member/api/memberApi';
@@ -24,15 +25,15 @@ function MainPage() {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error('인증 실패');
-        return res.json();
-      })
-      .then((data) => setUser(data))
-      .catch(() => {
-        tokenStorage.clear();
-        navigate('/login');
-      });
+        .then((res) => {
+          if (!res.ok) throw new Error('인증 실패');
+          return res.json();
+        })
+        .then((data) => setUser(data))
+        .catch(() => {
+          tokenStorage.clear();
+          navigate('/login');
+        });
   }, [navigate]);
 
   const handleLogout = () => {
@@ -54,31 +55,31 @@ function MainPage() {
   };
 
   return (
-    <div className="main-container">
-      <header className="main-header">
-        <h1>Studylog</h1>
-        <div className="header-right">
-          {user && <span className="user-name">{user.nickname}님</span>}
-          <button className="logout-btn" onClick={handleLogout}>
-            로그아웃
-          </button>
-        </div>
-      </header>
+      <div className="main-container">
+        <header className="main-header">
+          <h1>Studylog</h1>
+          <div className="header-right">
+            {user && <span className="user-name">{user.nickname}님</span>}
+            <button className="logout-btn" onClick={handleLogout}>
+              로그아웃
+            </button>
+          </div>
+        </header>
 
-      <main className="main-content">
-        <div className="welcome-card">
-          <h2>환영합니다!</h2>
-          <p>오늘도 열심히 공부해봐요</p>
-        </div>
-
-        <div className="feature-grid">
-          <div
-              className="feature-card"
-              onClick={handleGoTimer}
-              style={{ cursor: 'pointer' }}>
-            <div className="feature-icon">⏱️</div>
-            <h3>타이머</h3>
-            <p>공부 시간을 측정하세요</p>
+        <main className="main-content">
+          <div className="welcome-card">
+            <h2>환영합니다!</h2>
+            <p>오늘도 열심히 공부해봐요</p>
+          </div>
+          <div className="feature-grid">
+            <div
+                className="feature-card"
+                onClick={handleGoTimer}
+                style={{ cursor: 'pointer' }}>
+              <div className="feature-icon">⏱️</div>
+              <h3>타이머</h3>
+              <p>공부 시간을 측정하세요</p>
+            </div>
           </div>
           <NavLink to="/subjects" className="feature-card">
             <div className="feature-icon">📚</div>
