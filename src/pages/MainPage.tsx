@@ -116,6 +116,7 @@ function MainPage() {
             <div className="feature-icon">📝</div>
             <h3>투두</h3>
             <p>오늘의 투두리스트를 계획해보세요</p>
+        </div>
           <div className="feature-card" role="button"
                onClick={() => navigate("/comm/list")}
                onKeyDown={(e) => {
@@ -125,7 +126,6 @@ function MainPage() {
             <h3>커뮤니티</h3>
             <p>함께 공부를 해보아요</p>
           </div>
-        </div>
       </main>
     </div>
   );
