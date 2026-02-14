@@ -6,7 +6,7 @@ import axios, {
     type InternalAxiosRequestConfig,
     type AxiosRequestConfig
 } from "axios";
-import { ApiError, type ApiResponse, type ErrorResponse } from "../types/api.ts";
+type ErrorResponse } from "../types/api.ts";
 import { MessageUtil } from "../utils/messageUtil.ts";
 import { ErrorCode, HTTP_STATUS_TO_ERROR_CODE } from "../constants/ResponseCode.ts";
 // 기존에 토큰을 관리하던 storage를 가져옵니다.
@@ -46,6 +46,7 @@ api.interceptors.response.use(
         // 2. 응답 데이터(body)가 존재하고 success 필드가 true인 경우 data만 반환
         if (data && data.success) {
             return data.data as unknown as AxiosResponse;
+
         }
 
         // 3. 만약 data(body)는 없지만 HTTP 상태 코드가 성공(200~299)인 경우 성공 처리

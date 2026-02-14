@@ -17,7 +17,7 @@ export const getReflections = async (): Promise<Reflection[]> => {
     const data = await api.get<ReflectionResponse[]>("/reflections");
 
     // 백엔드 reflectionId 를 프론트 id로 매핑
-    return data.map((r) => ({
+    return data.map((r: any) => ({
         id: r.reflectionId,
         content: r.content,
         createdAt: r.createdAt,

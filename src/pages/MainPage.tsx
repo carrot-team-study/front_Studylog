@@ -71,7 +71,6 @@ function MainPage() {
             <h2>환영합니다!</h2>
             <p>오늘도 열심히 공부해봐요</p>
           </div>
-
           <div className="feature-grid">
             <div
                 className="feature-card"

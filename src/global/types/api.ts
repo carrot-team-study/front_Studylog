@@ -17,7 +17,7 @@ export interface ApiResponse<T = unknown> {
  * 성공 응답 타입
  * 백엔드: com.studylog.api.global.common.response.SuccessResponse
  */
-export interface SuccessResponse<T = unknown> extends ApiResponse<T> {
+export interface SuccessResponse<T = unknown> extends ApiResponse<T> {evelop
     success: true;
     code: SuccessCode;
     data: T;
