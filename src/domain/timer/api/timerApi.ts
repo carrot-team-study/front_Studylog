@@ -41,7 +41,7 @@ export const resumeTimer = async (subjectId: number) => {
 export const stopTimer = async (
     subjectId: number
 ): Promise<TimerStopResponse> => {
-    return await api.post("/timer/stop", null, {
+    return await api.post<TimerStopResponse>("/timer/stop", null, {
         params: { subjectId }
     });
 };
@@ -52,7 +52,7 @@ export const stopTimer = async (
 export const getTimerStatus = async (
     subjectId: number
 ): Promise<TimerStatus> => {
-    return await api.get("/timer/status", {
+    return await api.get<TimerStatus>("/timer/status", {
         params: { subjectId }
     });
 };
@@ -63,7 +63,7 @@ export const getTimerStatus = async (
 export const getTimerRecords = async (
     date: string
 ): Promise<TimerRecord[]> => {
-    return await api.get("/timer/records", {
+    return await api.get<TimerRecord[]>("/timer/records", {
         params: { date }
     });
 };
@@ -72,7 +72,7 @@ export const getTimerRecords = async (
  * 수동 기록 추가
  */
 export const addManualTimer = async (data: { subjectId: number; duration: number }): Promise<TimerStopResponse> => {
-    return await api.post("/timer/records/manual", data);
+    return await api.post<TimerStopResponse>("/timer/records/manual", data);
 };
 
 /**
@@ -81,7 +81,7 @@ export const addManualTimer = async (data: { subjectId: number; duration: number
 export const getDailySummary = async (
     date: string
 ): Promise<StudyLogSummary> => {
-    return await api.get("/timer/records/summary", {
+    return await api.get<StudyLogSummary>("/timer/records/summary", {
         params: { date }
     });
 };

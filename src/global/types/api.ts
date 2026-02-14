@@ -1,14 +1,11 @@
-/**
- * API 응답 타입 정의
- * 백엔드의 ApiResponse, SuccessResponse, ErrorResponse와 매핑
- */
+// src/global/types/api.ts
 import { SuccessCode, ErrorCode } from '../constants/ResponseCode';
 
 /**
  * 기본 API 응답 인터페이스
  * (백엔드에서 공통으로 사용하는 기본 틀)
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
     success: boolean;
     code: SuccessCode | ErrorCode;
     message: string;
@@ -20,7 +17,7 @@ export interface ApiResponse<T = any> {
  * 성공 응답 타입
  * 백엔드: com.studylog.api.global.common.response.SuccessResponse
  */
-export interface SuccessResponse<T = any> extends ApiResponse<T> {
+export interface SuccessResponse<T = unknown> extends ApiResponse<T> {
     success: true;
     code: SuccessCode;
     data: T;
@@ -66,7 +63,6 @@ export class ApiError extends Error {
         this.validationErrors = validationErrors;
 
         // ES5 환경에서 instanceof가 제대로 동작하도록 프로토타입 설정
-        // setPrototypeOf가 없는 환경에서는 skip
         if (typeof Object.setPrototypeOf === 'function') {
             Object.setPrototypeOf(this, ApiError.prototype);
         }
