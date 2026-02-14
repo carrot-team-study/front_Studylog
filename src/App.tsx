@@ -9,6 +9,9 @@ import GroupMemberTodoPage from "./domain/community/pages/GroupMemberTodoPage.ts
 import CommGroupCreatePage from "./domain/community/pages/CommGroupCreatePage.tsx";
 import MyGroupListPage from "./domain/community/pages/MyGroupListPage.tsx";
 import CommGroupRankingPage from "./domain/community/pages/CommGroupRankingPage.tsx";
+import SubjectPage from "./domain/subject/pages/SubjectPage.tsx";
+import StatisticsPage from "./domain/stat/pages/StatisticsPage.tsx";
+import PlanPage from "./domain/plan/pages/PlanPage.tsx";
 
 
 function App() {
@@ -25,6 +28,9 @@ function App() {
         <Route path="/groups/new" element={<CommGroupCreatePage />} />
         <Route path="/my/groups" element={<MyGroupListPage />} />
         <Route path="/groups/:groupId/rankings" element={<CommGroupRankingPage />} />
+        <Route path="/subjects" element={<SubjectPage />} />
+        <Route path="/statistics" element={<StatisticsPage />} />
+        <Route path="/plans" element={<PlanPage />} />
       </Routes>
     </BrowserRouter>
   );
