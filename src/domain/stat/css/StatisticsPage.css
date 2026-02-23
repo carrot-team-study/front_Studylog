@@ -1,0 +1,130 @@
+.stat-container {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.page-header {
+  background: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.back-btn:hover {
+  background: #f3f4f6;
+}
+
+.stat-body {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 22px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card-title {
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-total {
+  margin: 0 0 16px 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #667eea;
+}
+
+.stat-subject-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stat-subject-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-subject-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+}
+
+.stat-subject-name {
+  color: #374151;
+  font-weight: 500;
+}
+
+.stat-subject-time {
+  color: #6b7280;
+}
+
+.stat-bar-track {
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.no-data {
+  font-size: 0.88rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #9ca3af;
+}

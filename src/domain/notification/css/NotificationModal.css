@@ -1,0 +1,231 @@
+.notif-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 200;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-top: 68px;
+  padding-right: 24px;
+}
+
+.notif-panel {
+  background: white;
+  border-radius: 20px;
+  width: 340px;
+  max-height: 480px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  animation: slideDown 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.notif-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notif-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.notif-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mark-all-btn {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.mark-all-btn:hover {
+  background: #f0f0ff;
+}
+
+.notif-close-btn {
+  width: 32px;
+  height: 32px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.notif-close-btn:hover {
+  background: #e5e7eb;
+}
+
+.notif-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 빈 상태 */
+.notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 20px;
+  gap: 12px;
+}
+
+.notif-empty-icon {
+  fill: #d1d5db;
+}
+
+.notif-empty p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* 알림 목록 */
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 20px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.notif-item:hover {
+  background: #f9fafb;
+}
+
+.notif-item.read .notif-dot {
+  background: #d1d5db;
+}
+
+.notif-item.read .notif-message {
+  color: #9ca3af;
+}
+
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #667eea;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.notif-text {
+  flex: 1;
+}
+
+.notif-type-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #667eea;
+  background: #f0f0ff;
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-bottom: 4px;
+}
+
+.notif-title {
+  margin: 0 0 2px 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.notif-message {
+  margin: 0 0 4px 0;
+  font-size: 0.83rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.notif-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.notif-delete-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  color: #d1d5db;
+  font-size: 0.7rem;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.notif-delete-btn:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+@media (max-width: 640px) {
+  .notif-overlay {
+    padding-right: 12px;
+    padding-top: 60px;
+  }
+
+  .notif-panel {
+    width: calc(100vw - 24px);
+  }
+}
