@@ -15,6 +15,7 @@ import CommGroupRankingPage from "./domain/community/pages/CommGroupRankingPage.
 import SubjectPage from "./domain/subject/pages/SubjectPage.tsx";
 import StatisticsPage from "./domain/stat/pages/StatisticsPage.tsx";
 import PlanPage from "./domain/plan/pages/PlanPage.tsx";
+import MyPage from "./domain/member/pages/MyPage.tsx";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/subjects" element={<SubjectPage />} />
         <Route path="/statistics" element={<StatisticsPage />} />
         <Route path="/plans" element={<PlanPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   );
