@@ -1,17 +1,29 @@
+// src/domain/reflection/pages/ReflectionPage.tsx
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReflectionForm from "../components/ReflectionForm";
 import { createReflection, getReflections, updateReflection, deleteReflection } from "../api/reflectionApi";
 import type { Reflection } from "../types/reflection";
-import "../css/ReflectionPage.css";
 
 function ReflectionPage() {
+    // 상태 관리
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
     const [reflections, setReflections] = useState<Reflection[]>([]);
     const [selectedReflection, setSelectedReflection] = useState<Reflection | null>(null);
     const [mode, setMode] = useState<"create" | "edit">("create");
     const navigate = useNavigate();
+
+    // 날짜 포맷 함수
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    };
 
     const handleBack = () => {
         if (mode === "edit") {
@@ -76,38 +88,65 @@ function ReflectionPage() {
         setMode("edit");
     };
 
+    // 수정 취소 버튼 클릭 시 실행
+    const handleCancel = () => {
+        setContent("");
+        setSelectedReflection(null);
+        setMode("create");
+    };
+
     return (
         <div className="reflection-container">
-            <header className="page-header">
-                <button className="back-btn" onClick={handleBack}>←</button>
-                <h2>회고</h2>
+
+            <header className="page-header d-flex justify-content-between align-items-center">
+                <button className="back-btn btn btn-light" onClick={handleBack}>←</button>
+                <h2 className="m-0">회고</h2>
                 <div style={{ width: 40 }} />
             </header>
 
-            <div className="reflection-body">
-                <div className="reflection-form-card">
-                    <h3>{mode === "create" ? "오늘의 회고 작성" : "회고 수정"}</h3>
-                    <ReflectionForm
-                        content={content}
-                        onChange={setContent}
-                        onSubmit={handleSubmit}
-                        disabled={loading}
-                        mode={mode}
-                    />
+            <div className="reflection-body mx-auto px-3 pt-4" style={{ maxWidth: "40rem" }}>
+
+                <div className="card shadow-sm mb-3">
+                    <div className="card-body">
+                        <h4 className="mb-3 fw-bold">
+                            {mode === "create" ? "오늘의 회고 작성" : "회고 수정"}
+                        </h4>
+
+                        <ReflectionForm
+                            content={content}
+                            onChange={setContent}
+                            onSubmit={handleSubmit}
+                            onCancel={handleCancel}
+                            disabled={loading}
+                            mode={mode}/>
+                    </div>
                 </div>
 
                 {reflections.length === 0 ? (
-                    <div className="empty-state">작성된 회고가 없습니다.</div>
+                    <div className="empty-state text-center text-muted py-5">작성된 회고가 없습니다</div>
                 ) : (
-                    <div className="reflection-list">
+                    <div className="reflection-list d-flex flex-column gap-3">
                         {reflections.map((r) => (
-                            <div key={r.id} className="reflection-item">
-                                <p className="reflection-content">{r.content}</p>
-                                <div className="reflection-meta">
-                                    <span className="reflection-date">{r.createdAt}</span>
-                                    <div className="reflection-item-actions">
-                                        <button className="edit-btn" onClick={() => handleSelectReflection(r)}>수정</button>
-                                        <button className="delete-btn" onClick={() => handleDelete(r.id)}>삭제</button>
+                            <div key={r.id} className="reflection-item card shadow-sm">
+                                <div className="card-body">
+                                    <p className="reflection-content mb-2" style={{ fontSize:"0.9rem" }}>{r.content}</p>
+                                    <div className="reflection-meta d-flex justify-content-between align-items-center">
+                                        <span className="reflection-date text-muted" style={{ fontSize:"0.8rem" }}>
+                                            {formatDate(r.createdAt)}
+                                        </span>
+
+                                        <div className="reflection-item-actions d-flex gap-2">
+                                            <button
+                                                className="edit-btn btn btn-sm btn-light"
+                                                onClick={() => handleSelectReflection(r)}>
+                                                수정
+                                            </button>
+                                            <button
+                                                className="delete-btn btn btn-sm btn-danger"
+                                                onClick={() => handleDelete(r.id)}>
+                                                삭제
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

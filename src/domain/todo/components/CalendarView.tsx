@@ -11,7 +11,8 @@ interface Props {
     allTodos: Todo[];
 }
 
-const CalendarView: React.FC<Props> = ({selectedDate, onSelectDate, allTodos,}) => {
+const CalendarView: React.FC<Props> = ({ selectedDate, onSelectDate, allTodos }) => {
+
     const formatDate = (date: Date) => {
         const y = date.getFullYear();
         const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -20,51 +21,58 @@ const CalendarView: React.FC<Props> = ({selectedDate, onSelectDate, allTodos,}) 
     };
 
     return (
-        <div style={{ marginTop: "20px" }}>
-            <Calendar
-                value={selectedDate ? new Date(selectedDate) : new Date()}
-                onClickDay={(value) => {
-                    const formatted = formatDate(value);
-                    onSelectDate(formatted);
-                }}
-                tileContent={({ date, view }) => {
-                    if (view !== "month") return null;
+        <div className="card shadow-sm mt-3">
+            <div className="card-body">
 
-                    const formatted = formatDate(date);
+                <Calendar
+                    value={selectedDate ? new Date(selectedDate) : new Date()}
+                    onClickDay={(value) => {
+                        const formatted = formatDate(value);
+                        onSelectDate(formatted);
+                    }}
 
-                    const todosOfDay = allTodos.filter(
-                        (t) => t.targetDate === formatted
-                    );
+                    tileContent={({ date, view }) => {
 
-                    if (!todosOfDay.length) return null;
+                        if (view !== "month") return null;
 
-                    // 과목 중복 제거
-                    const subjectNames = Array.from(
-                        new Set(todosOfDay.map((t) => t.subjectName))
-                    );
+                        const formatted = formatDate(date);
 
-                    const visibleSubjects = subjectNames.slice(0, 2);
-                    const remainCount =
-                        subjectNames.length - visibleSubjects.length;
+                        const todosOfDay = allTodos.filter(
+                            (t) => t.targetDate === formatted
+                        );
 
-                    return (
-                        <div
-                            style={{
-                                marginTop: "4px",
-                                fontSize: "10px",
-                                textAlign: "center",
-                                lineHeight: "1.2",
-                            }}>
-                            {visibleSubjects.map((name) => (
-                                <div key={name}>{name}</div>
-                            ))}
+                        if (!todosOfDay.length) return null;
 
-                            {remainCount > 0 && (
-                                <div>+{remainCount}</div>
-                            )}
-                        </div>
-                    );
-                }}/>
+                        // 과목 중복 제거
+                        const subjectNames = Array.from(
+                            new Set(todosOfDay.map((t) => t.subjectName))
+                        );
+
+                        const visibleSubjects = subjectNames.slice(0, 2);
+                        const remainCount =
+                            subjectNames.length - visibleSubjects.length;
+
+                        return (
+                            <div
+                                style={{
+                                    marginTop: "0.25rem",
+                                    fontSize: "0.7rem",
+                                    textAlign: "center",
+                                    lineHeight: "1.2",
+                                }}>
+                                {visibleSubjects.map((name) => (
+                                    <div key={name}>{name}</div>
+                                ))}
+
+                                {remainCount > 0 && (
+                                    <div>+{remainCount}</div>
+                                )}
+
+                            </div>
+                        );
+                    }}
+                />
+            </div>
         </div>
     );
 };

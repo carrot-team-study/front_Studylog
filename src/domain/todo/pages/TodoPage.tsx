@@ -5,7 +5,9 @@ import CalendarView from "../components/CalendarView";
 import TodoList from "../components/TodoList";
 import TodoForm from "../components/TodoForm";
 import type { Todo } from "../types/todo";
-import { getTodos, getTodosByDate, createTodo, updateTodo, deleteTodo, updateTodoComplete } from "../api/todoApi";
+import type { Subject } from "../../subject/types/subject";
+import { subjectApi } from "../../subject/api/subjectApi";
+import {getTodos, getTodosByDate, createTodo, updateTodo, deleteTodo, updateTodoComplete,} from "../api/todoApi";
 import "../css/TodoPage.css";
 
 function TodoPage() {
@@ -13,7 +15,13 @@ function TodoPage() {
     const [subjectId, setSubjectId] = useState<number | null>(null);
     const [targetDate, setTargetDate] = useState<string>("");
     const [loading, setLoading] = useState(false);
+
+    // 리스트 표시용
     const [todos, setTodos] = useState<Todo[]>([]);
+    // 캘린더 표시용
+    const [allTodos, setAllTodos] = useState<Todo[]>([]);
+    // 사용자 과목 목록
+    const [subjects, setSubjects] = useState<Subject[]>([]);
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
     const [mode, setMode] = useState<"create" | "edit">("create");
     const [selectedDate, setSelectedDate] = useState<string>("");
@@ -29,6 +37,8 @@ function TodoPage() {
         try {
             const data = await getTodos();
             setTodos(data);
+            // 캘린더 표시용 데이터도 저장
+            setAllTodos(data);
         } catch (e) {
             console.error(e);
         }
@@ -38,19 +48,40 @@ function TodoPage() {
         try {
             if (!date) return fetchTodos();
             const data = await getTodosByDate(date);
+            // 리스트만 업데이트
             setTodos(data);
         } catch (e) {
             console.error(e);
         }
     };
 
-    useEffect(() => { fetchTodos(); }, []);
-    useEffect(() => { if (selectedDate) fetchTodosByDate(selectedDate); }, [selectedDate]);
+    /**
+     * 사용자 과목 목록 조회
+     */
+    const fetchSubjects = async () => {
+        try {
+            const data = await subjectApi.getAll();
+            setSubjects(data);
+        } catch (e) {
+            console.error("과목 조회 실패", e);
+        }
+    };
+
+    useEffect(() => {
+        fetchTodos();
+        fetchSubjects();
+    }, []);
+
+    useEffect(() => {
+        if (selectedDate) fetchTodosByDate(selectedDate);
+    }, [selectedDate]);
 
     const handleSubmit = async () => {
         if (!content.trim() || !subjectId || !targetDate) return;
+
         try {
             setLoading(true);
+
             if (mode === "create") {
                 await createTodo({ content, subjectId, targetDate });
                 alert("Todo 저장 완료");
@@ -58,11 +89,15 @@ function TodoPage() {
                 await updateTodo(selectedTodo!.id, { content, subjectId, targetDate });
                 alert("Todo 수정 완료");
             }
+
             setContent("");
             setSubjectId(null);
             setSelectedTodo(null);
             setMode("create");
             setShowForm(false);
+
+            // 전체 todo를 다시 불러와서 캘린더도 갱신
+            await fetchTodos();
             await fetchTodosByDate(selectedDate);
         } catch (e) {
             console.error(e);
@@ -73,8 +108,11 @@ function TodoPage() {
 
     const handleDelete = async (todoId: number) => {
         if (!confirm("정말 삭제할까요?")) return;
+
         try {
             await deleteTodo(todoId);
+            // 캘린더 갱신
+            await fetchTodos();
             await fetchTodosByDate(selectedDate);
             alert("삭제 완료");
         } catch (e) {
@@ -85,6 +123,7 @@ function TodoPage() {
     const handleToggleComplete = async (todoId: number, completed: boolean) => {
         try {
             await updateTodoComplete(todoId, completed);
+            await fetchTodos();
             await fetchTodosByDate(selectedDate);
         } catch (e) {
             console.error(e);
@@ -116,29 +155,36 @@ function TodoPage() {
                         setTargetDate(date);
                         setShowForm(false);
                     }}
-                    allTodos={todos}
-                />
+                    allTodos={allTodos}/>
 
                 {selectedDate && (
                     <>
                         <h2 className="selected-date-title">{selectedDate}</h2>
+
                         <TodoList
                             todos={todos}
                             onEdit={handleSelectTodo}
                             onDelete={handleDelete}
-                            onToggle={handleToggleComplete}
-                        />
+                            onToggle={handleToggleComplete}/>
+
                         <button
                             className="add-todo-btn"
                             onClick={() => {
+
+                                if (showForm) {
+                                    // 폼 닫기
+                                    setShowForm(false);
+                                    return;
+                                }
+
+                                // 폼 열기
                                 setMode("create");
                                 setContent("");
                                 setSubjectId(null);
                                 setTargetDate(selectedDate);
                                 setShowForm(true);
-                            }}
-                        >
-                            + Todo 추가
+                            }}>
+                            {showForm ? "닫기" : "+ Todo 추가"}
                         </button>
                     </>
                 )}
@@ -148,13 +194,13 @@ function TodoPage() {
                         content={content}
                         subjectId={subjectId}
                         targetDate={targetDate}
+                        subjects={subjects}
                         onContentChange={setContent}
                         onSubjectChange={setSubjectId}
                         onDateChange={setTargetDate}
                         onSubmit={handleSubmit}
                         disabled={loading}
-                        mode={mode}
-                    />
+                        mode={mode}/>
                 )}
             </div>
         </div>
