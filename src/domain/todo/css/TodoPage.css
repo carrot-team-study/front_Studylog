@@ -1,72 +1,55 @@
-.todo-container {
-  min-height: 100vh;
-  background: #f5f7fb;
+/* src/domain/todo/css/TodoPage.css */
+
+.todo-body {
+  width: 90%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1.25rem;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
-.page-header {
-  background: white;
-  padding: 16px 20px;
+/* 캘린더 반응형 */
+.react-calendar {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 0.8rem;
+  border: none;
+  padding: 0.7rem;
+  font-size: clamp(0.8rem, 2vw, 1rem);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* 날짜 타일 최소 높이만 지정 */
+.react-calendar__tile {
+  min-height: 4rem;
+}
+
+/* 선택 날짜 */
+.selected-date-title {
+  margin-top: 1.25rem;
+  margin-bottom: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Todo 카드 스타일 */
+.card {
+  border-radius: 0.75rem;
+}
+
+/* Todo 리스트 카드 내부만 flex 적용 */
+.todo-item-body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  flex-wrap: wrap;
 }
 
-.page-header h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.back-btn {
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: #4b5563;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background 0.2s;
-}
-
-.back-btn:hover {
-  background: #f3f4f6;
-}
-
-.todo-body {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px 16px;
-}
-
+/* 추가 버튼 */
 .add-todo-btn {
-  margin-top: 14px;
-  padding: 10px 20px;
-  background: #667eea;
-  border: none;
-  border-radius: 20px;
-  color: white;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.add-todo-btn:hover {
-  background: #5a6fd6;
-}
-
-.selected-date-title {
-  margin: 20px 0 10px 0;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1a1a2e;
+  width: 100%;
+  margin-top: 1rem;
 }

@@ -4,6 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { tokenStorage } from '../domain/member/api/memberApi';
 import { notificationApi } from '../domain/notification/api/notificationApi';
 import NotificationModal from '../domain/notification/components/NotificationModal';
+import "bootstrap/dist/css/bootstrap.min.css";
 import './MainPage.css';
 
 interface UserInfo {
@@ -91,7 +92,7 @@ function MainPage() {
             <span /><span /><span />
           </button>
           {menuOpen && (
-            <div className="dropdown-menu">
+            <div className="user-dropdown">
               <button onClick={() => { setMenuOpen(false); navigate('/mypage'); }}>마이페이지</button>
               <button onClick={() => { setMenuOpen(false); handleLogout(); }}>로그아웃</button>
             </div>
