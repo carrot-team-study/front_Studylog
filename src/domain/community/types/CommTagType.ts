@@ -1,5 +1,6 @@
 // src/domain/community/types/CommTagType.ts
-export type CommTagDto = {
+export interface CommTagDto {
     tagId: number;
-    tagName: string;
-};
+    name?: string;
+    tagName?: string;
+}

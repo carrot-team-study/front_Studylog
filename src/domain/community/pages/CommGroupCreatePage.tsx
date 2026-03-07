@@ -114,8 +114,7 @@ export default function CommGroupCreatePage() {
                                         cursor: "pointer",
                                     }}
                                 >
-                                    {/* ✅ 엔티티 기준 name일 가능성 큼: CommTagDto도 name으로 맞춰 */}
-                                    #{(t as any).name ?? (t as any).tagName}
+                                    #{t.name ?? t.tagName ?? ""}
                                 </button>
                             );
                         })}
