@@ -1,3 +1,5 @@
+// src/domain/timer/components/TimerDisplay.tsx
+
 interface Props {
     elapsed: number;
 }

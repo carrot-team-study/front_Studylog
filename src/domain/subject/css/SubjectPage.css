@@ -1,0 +1,210 @@
+.subject-container {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.page-header {
+  background: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.back-btn:hover {
+  background: #f3f4f6;
+}
+
+.subject-body {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.add-subject-btn {
+  width: 100%;
+  padding: 14px;
+  background: #667eea;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background 0.2s;
+}
+
+.add-subject-btn:hover {
+  background: #5a6fd6;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+.subject-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subject-item {
+  background: white;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.subject-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.subject-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  padding: 6px 14px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.edit-btn:hover {
+  background: #e5e7eb;
+}
+
+.delete-btn {
+  padding: 6px 14px;
+  background: #fef2f2;
+  border: none;
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* 모달 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: 360px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-box h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.1rem;
+  color: #1a1a2e;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #667eea;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-cancel-btn {
+  flex: 1;
+  padding: 12px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 10px;
+  color: #6b7280;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal-cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+.modal-submit-btn {
+  flex: 1;
+  padding: 12px;
+  background: #667eea;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal-submit-btn:hover {
+  background: #5a6fd6;
+}

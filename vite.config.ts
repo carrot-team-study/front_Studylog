@@ -12,7 +12,6 @@ export default defineConfig({
         secure: false,
         
       },
-      "/todos": { target: "http://localhost:8081", changeOrigin: true },
     },
   },
 })

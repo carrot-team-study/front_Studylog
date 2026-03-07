@@ -4,7 +4,6 @@ import SignupPage from "./domain/member/pages/SignupPage";
 import KakaoCallback from "./domain/member/pages/KakaoCallback";
 import MainPage from "./pages/MainPage";
 import ReflectionPage from "./domain/reflection/pages/ReflectionPage.tsx";
-import TimerPage from "./domain/timer/pages/TimerPage.tsx";
 import TodoPage from "./domain/todo/pages/TodoPage.tsx";
 import CommGroupListPage from "./domain/community/pages/CommGroupListPage.tsx";
 import CommGroupDetailPage from "./domain/community/pages/CommGroupDetailPage.tsx";
@@ -15,6 +14,9 @@ import CommGroupRankingPage from "./domain/community/pages/CommGroupRankingPage.
 import SubjectPage from "./domain/subject/pages/SubjectPage.tsx";
 import StatisticsPage from "./domain/stat/pages/StatisticsPage.tsx";
 import PlanPage from "./domain/plan/pages/PlanPage.tsx";
+import MyPage from "./domain/member/pages/MyPage.tsx";
+import TimerHomePage from "./domain/timer/pages/TimerHomePage.tsx";
+import TimerSubjectPage from "./domain/timer/pages/TimerSubjectPage.tsx";
 
 function App() {
   return (
@@ -25,7 +27,8 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/oauth/kakao" element={<KakaoCallback />} />
         <Route path="/reflections" element={<ReflectionPage />} />
-        <Route path="/timer" element={<TimerPage />} />
+        <Route path="/timer" element={<TimerHomePage />} />
+        <Route path="/timer/:subjectId" element={<TimerSubjectPage />} />
         <Route path="/todos" element={<TodoPage />} />
         <Route path="/comm/list" element={<CommGroupListPage />} />
         <Route path="/groups/:groupId" element={<CommGroupDetailPage />} />
@@ -36,6 +39,7 @@ function App() {
         <Route path="/subjects" element={<SubjectPage />} />
         <Route path="/statistics" element={<StatisticsPage />} />
         <Route path="/plans" element={<PlanPage />} />
+        <Route path="/mypage" element={<MyPage />} />
       </Routes>
     </BrowserRouter>
   );
