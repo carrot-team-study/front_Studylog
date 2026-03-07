@@ -4,7 +4,7 @@ export type TodoResponse = {
     memberId: number;
     content: string;
     targetDate: string;   // "2026-02-12"
-    isCompleted: boolean; // 여기 중요
+    completed: boolean;
     createdAt: string;
     updatedAt: string;
 };

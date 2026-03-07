@@ -1,4 +1,3 @@
-// src/domain/community/pages/CommGroupDetailPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { commApi } from "../api/commApi";
@@ -8,6 +7,7 @@ import type {
     GroupJoinRequest,
 } from "../types/CommGroupType";
 import type { CommTagDto } from "../types/CommTagType";
+import "../css/CommGroupDetailPage.css";
 
 type ApiErrorShape = {
     code?: string;
@@ -60,12 +60,12 @@ export default function CommGroupDetailPage() {
     const [error, setError] = useState<string | null>(null);
     const [memberError, setMemberError] = useState<string | null>(null);
 
-    // ✅ 태그 목록 전체 로드
     const [allTags, setAllTags] = useState<CommTagDto[]>([]);
+
     useEffect(() => {
         (async () => {
             try {
-                const list = await commApi.tag.list(); // GET /api/comm/tags
+                const list = await commApi.tag.list();
                 setAllTags(list);
             } catch {
                 setAllTags([]);
@@ -73,11 +73,10 @@ export default function CommGroupDetailPage() {
         })();
     }, []);
 
-    // ✅ tagId -> tagName 매핑
     const tagNameById = useMemo(() => {
         const map = new Map<number, string>();
         for (const t of allTags) {
-            const name = t.tagName ?? t.tagName;
+            const name = t.tagName;
             if (typeof name === "string" && name.trim()) {
                 map.set(t.tagId, name);
             }
@@ -85,7 +84,6 @@ export default function CommGroupDetailPage() {
         return map;
     }, [allTags]);
 
-    // /me 로드
     useEffect(() => {
         (async () => {
             try {
@@ -97,7 +95,6 @@ export default function CommGroupDetailPage() {
         })();
     }, []);
 
-    // 상세
     useEffect(() => {
         if (gid == null) return;
 
@@ -106,7 +103,6 @@ export default function CommGroupDetailPage() {
             setError(null);
             try {
                 const d = await commApi.group.detail(gid);
-                console.log("detail response:", d); // ✅ 여기서 찍어야 함
                 setDetail(d);
             } catch (err: unknown) {
                 setError(getErrorMessage(err, "알 수 없는 오류"));
@@ -116,7 +112,6 @@ export default function CommGroupDetailPage() {
         })();
     }, [gid]);
 
-    // 가입 여부 체크(멤버 목록)
     useEffect(() => {
         if (gid == null) return;
 
@@ -125,8 +120,11 @@ export default function CommGroupDetailPage() {
                 const list = await commApi.member.list(gid);
                 setMembers(list);
 
-                if (myId != null) setIsJoined(list.some((m) => m.memberId === myId));
-                else setIsJoined(true);
+                if (myId != null) {
+                    setIsJoined(list.some((m) => m.memberId === myId));
+                } else {
+                    setIsJoined(false);
+                }
 
                 setMemberError(null);
             } catch (err: unknown) {
@@ -156,8 +154,11 @@ export default function CommGroupDetailPage() {
             const list = await commApi.member.list(gid);
             setMembers(list);
 
-            if (myId != null) setIsJoined(list.some((m) => m.memberId === myId));
-            else setIsJoined(true);
+            if (myId != null) {
+                setIsJoined(list.some((m) => m.memberId === myId));
+            } else {
+                setIsJoined(false);
+            }
         } catch (err: unknown) {
             const status = getStatus(err);
 
@@ -186,8 +187,9 @@ export default function CommGroupDetailPage() {
         } catch (err: unknown) {
             const code = getErrorCode(err);
             const msg = getErrorMessage(err, "");
+            const needPassword =
+                code === "GROUP_PASSWORD_REQUIRED" || msg.includes("비밀번호");
 
-            const needPassword = code === "GROUP_PASSWORD_REQUIRED" || msg.includes("비밀번호");
             if (!needPassword) {
                 alert(msg || "가입 실패");
                 return;
@@ -248,12 +250,55 @@ export default function CommGroupDetailPage() {
         navigate(`/groups/${gid}/members/${memberId}/todos`);
     };
 
-    if (gid == null) return <div style={{ padding: 16 }}>잘못된 groupId</div>;
-    if (loading) return <div style={{ padding: 16 }}>불러오는 중...</div>;
-    if (error) return <div style={{ padding: 16, color: "red" }}>불러오기 실패: {error}</div>;
-    if (!detail) return <div style={{ padding: 16 }}>데이터 없음</div>;
+    if (gid == null) {
+        return <div className="comm-detail-fallback">잘못된 groupId</div>;
+    }
 
-    // ✅ 핵심: detail.tagIds -> 이름 매핑
+    if (loading) {
+        return (
+            <div className="comm-detail-container">
+                <header className="page-header">
+                    <button className="back-btn" onClick={() => navigate(-1)}>←</button>
+                    <h2>그룹 상세</h2>
+                    <div style={{ width: 40 }} />
+                </header>
+                <div className="comm-detail-body">
+                    <div className="empty-state">불러오는 중...</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="comm-detail-container">
+                <header className="page-header">
+                    <button className="back-btn" onClick={() => navigate(-1)}>←</button>
+                    <h2>그룹 상세</h2>
+                    <div style={{ width: 40 }} />
+                </header>
+                <div className="comm-detail-body">
+                    <div className="error-state">불러오기 실패: {error}</div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!detail) {
+        return (
+            <div className="comm-detail-container">
+                <header className="page-header">
+                    <button className="back-btn" onClick={() => navigate(-1)}>←</button>
+                    <h2>그룹 상세</h2>
+                    <div style={{ width: 40 }} />
+                </header>
+                <div className="comm-detail-body">
+                    <div className="empty-state">데이터 없음</div>
+                </div>
+            </div>
+        );
+    }
+
     const tagNames: Array<{ id: number; name: string }> =
         detail.tagIds?.map((id) => ({
             id,
@@ -261,76 +306,148 @@ export default function CommGroupDetailPage() {
         })) ?? [];
 
     return (
-        <div style={{ padding: 16 }}>
-            <h2>{detail.groupName}</h2>
+        <div className="comm-detail-container">
+            <header className="page-header">
+                <button className="back-btn" onClick={() => navigate(-1)}>←</button>
+                <h2>그룹 상세</h2>
+                <div style={{ width: 40 }} />
+            </header>
 
-            {/* 태그 표시 */}
-            <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {tagNames.length === 0 ? (
-                    <span style={{ opacity: 0.6 }}>태그 없음</span>
-                ) : (
-                    tagNames.map((t) => (
-                        <span
-                            key={t.id}
-                            style={{
-                                padding: "6px 10px",
-                                borderRadius: 999,
-                                border: "1px solid #ddd",
-                                fontSize: 13,
-                                opacity: 0.9,
-                            }}
-                        >
-              #{t.name}
-            </span>
-                    ))
-                )}
-            </div>
+            <div className="comm-detail-body">
+                <section className="detail-card">
+                    <div className="detail-top">
+                        <div>
+                            <h1 className="group-title">{detail.groupName}</h1>
+                            <p className="group-subtitle">
+                                함께 목표를 달성하는 커뮤니티 그룹
+                            </p>
+                        </div>
 
-            {detail.groupIntro ? (
-                <p style={{ marginTop: 8, opacity: 0.85, whiteSpace: "pre-wrap" }}>{detail.groupIntro}</p>
-            ) : (
-                <p style={{ marginTop: 8, opacity: 0.6 }}>소개가 없습니다.</p>
-            )}
+                        <div className="action-row">
+                            {isJoined ? (
+                                <button className="leave-btn" onClick={onLeave}>
+                                    탈퇴하기
+                                </button>
+                            ) : (
+                                <button className="join-btn" onClick={onJoin}>
+                                    가입하기
+                                </button>
+                            )}
 
-            <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                {isJoined ? <button onClick={onLeave}>탈퇴하기</button> : <button onClick={onJoin}>가입하기</button>}
-            </div>
+                            {isJoined && (
+                                <button
+                                    className="ranking-btn"
+                                    onClick={() => navigate(`/groups/${gid}/rankings`)}
+                                >
+                                    랭킹 보기
+                                </button>
+                            )}
+                        </div>
+                    </div>
 
-            {isJoined && <button onClick={() => navigate(`/groups/${gid}/rankings`)}>랭킹 보기</button>}
+                    <div className="info-grid">
+                        {/*<div className="info-box">*/}
+                        {/*    <div className="info-label">그룹 ID</div>*/}
+                        {/*    <div className="info-value">{detail.groupId}</div>*/}
+                        {/*</div>*/}
 
-            <div style={{ marginTop: 24 }}>
-                <h3>멤버</h3>
-
-                {!isJoined ? (
-                    <div style={{ opacity: 0.8 }}>가입해야 멤버 목록/투두/좋아요 사용 가능</div>
-                ) : memberLoading ? (
-                    <div>멤버 불러오는 중...</div>
-                ) : memberError ? (
-                    <div style={{ color: "red" }}>{memberError}</div>
-                ) : (
-                    <div style={{ display: "grid", gap: 10 }}>
-                        {members.map((m) => (
-                            <div key={m.memberId} style={{ border: "1px solid #ddd", borderRadius: 12, padding: 12 }}>
-                                <div style={{ fontWeight: 700 }}>{m.nickname}</div>
-                                <div style={{ marginTop: 6, fontSize: 14 }}>좋아요 {m.likeCount}</div>
-
-                                <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-                                    <button onClick={() => goMemberTodos(m.memberId)}>투두 보기</button>
-                                    <button onClick={() => onToggleLike(m.memberId)}>
-                                        {m.likedByMe ? "좋아요 취소" : "좋아요"}
-                                    </button>
+                        {"maxUser" in detail && (
+                            <div className="info-box">
+                                <div className="info-label">정원</div>
+                                <div className="info-value">
+                                    {typeof detail.maxUser === "number" ? `${detail.maxUser}명` : "-"}
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                        )}
 
-            {isJoined && members.length === 0 && !memberLoading && (
-                <div style={{ marginTop: 12 }}>
-                    <button onClick={loadMembers}>멤버 불러오기</button>
-                </div>
-            )}
+                        {"leaderId" in detail && (
+                            <div className="info-box">
+                                <div className="info-label">리더 ID</div>
+                                <div className="info-value">
+                                    {typeof detail.leaderId === "number" ? detail.leaderId : "-"}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="section-block">
+                        <div className="section-title">태그</div>
+                        <div className="tag-list">
+                            {tagNames.length === 0 ? (
+                                <span className="tag-empty">태그 없음</span>
+                            ) : (
+                                tagNames.map((t) => (
+                                    <span key={t.id} className="tag-chip">
+                                        #{t.name}
+                                    </span>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="section-block">
+                        <div className="section-title">소개</div>
+                        {detail.groupIntro ? (
+                            <div className="intro-box">{detail.groupIntro}</div>
+                        ) : (
+                            <div className="intro-box intro-empty">소개가 없습니다.</div>
+                        )}
+                    </div>
+                </section>
+
+                <section className="member-section">
+                    <div className="member-section-header">
+                        <h3>멤버</h3>
+                        {isJoined && members.length === 0 && !memberLoading && (
+                            <button className="reload-btn" onClick={loadMembers}>
+                                멤버 불러오기
+                            </button>
+                        )}
+                    </div>
+
+                    {!isJoined ? (
+                        <div className="empty-state">
+                            가입해야 멤버 목록, 투두, 좋아요를 사용할 수 있습니다.
+                        </div>
+                    ) : memberLoading ? (
+                        <div className="loading-inline">멤버 불러오는 중...</div>
+                    ) : memberError ? (
+                        <div className="error-state">{memberError}</div>
+                    ) : members.length === 0 ? (
+                        <div className="empty-state">멤버가 없습니다.</div>
+                    ) : (
+                        <div className="member-list">
+                            {members.map((m) => (
+                                <article key={m.memberId} className="member-card">
+                                    <div className="member-top">
+                                        <div>
+                                            <div className="member-name">{m.nickname}</div>
+                                            <div className="member-like-text">
+                                                좋아요 {m.likeCount}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="member-actions">
+                                        <button
+                                            className="member-todo-btn"
+                                            onClick={() => goMemberTodos(m.memberId)}
+                                        >
+                                            투두 보기
+                                        </button>
+                                        <button
+                                            className="member-like-btn"
+                                            onClick={() => onToggleLike(m.memberId)}
+                                        >
+                                            {m.likedByMe ? "좋아요 취소" : "좋아요"}
+                                        </button>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
         </div>
     );
 }
