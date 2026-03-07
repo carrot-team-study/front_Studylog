@@ -1,8 +1,8 @@
-// src/domain/community/pages/CommGroupRankingPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { commApi } from "../api/commApi";
 import type { RankRowDto } from "../types/CommGroupType";
+import "../css/CommGroupRankingPage.css";
 
 type Tab = "likes" | "todos";
 
@@ -16,7 +16,7 @@ export default function CommGroupRankingPage() {
     }, [groupId]);
 
     const [tab, setTab] = useState<Tab>("likes");
-    const [date, setDate] = useState<string>(""); // todos용(선택)
+    const [date, setDate] = useState<string>("");
     const [limit, setLimit] = useState(20);
 
     const [rows, setRows] = useState<RankRowDto[]>([]);
@@ -35,7 +35,6 @@ export default function CommGroupRankingPage() {
                 ...(tab === "todos" && date.trim() ? { date: date.trim() } : {}),
             };
 
-            // ✅ getData(url) -> commApi.ranking.*
             const data =
                 tab === "likes"
                     ? await commApi.ranking.likes(gid, params)
@@ -55,73 +54,122 @@ export default function CommGroupRankingPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [gid, tab, date, limit]);
 
-    if (gid == null) return <div style={{ padding: 16 }}>잘못된 groupId</div>;
+    if (gid == null) {
+        return <div className="comm-ranking-fallback">잘못된 groupId</div>;
+    }
 
     return (
-        <div style={{ padding: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h3>그룹 랭킹</h3>
-                <button onClick={() => navigate(-1)}>뒤로</button>
-            </div>
+        <div className="comm-ranking-container">
+            <header className="page-header">
+                <button className="back-btn" onClick={() => navigate(-1)}>←</button>
+                <h2>그룹 랭킹</h2>
+                <div style={{ width: 40 }} />
+            </header>
 
-            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                <button onClick={() => setTab("likes")} disabled={tab === "likes"}>
-                    좋아요 랭킹
-                </button>
-                <button onClick={() => setTab("todos")} disabled={tab === "todos"}>
-                    완료 투두 랭킹
-                </button>
-
-                <select value={limit} onChange={(e) => setLimit(Number(e.target.value))}>
-                    {[10, 20, 30, 50].map((n) => (
-                        <option key={n} value={n}>
-                            TOP {n}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {tab === "todos" && (
-                <div style={{ marginTop: 10, display: "flex", gap: 8, alignItems: "center" }}>
-                    <span style={{ fontSize: 13, opacity: 0.8 }}>날짜(선택)</span>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                    <button onClick={() => setDate("")}>오늘</button>
-                </div>
-            )}
-
-            <div style={{ marginTop: 14 }}>
-                {loading ? (
-                    <div>불러오는 중...</div>
-                ) : error ? (
-                    <div style={{ color: "red" }}>{error}</div>
-                ) : rows.length === 0 ? (
-                    <div style={{ opacity: 0.8 }}>데이터 없음</div>
-                ) : (
-                    <div style={{ display: "grid", gap: 8 }}>
-                        {rows.map((r, idx) => (
-                            <div
-                                key={r.memberId}
-                                style={{
-                                    border: "1px solid #ddd",
-                                    borderRadius: 12,
-                                    padding: 12,
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                                    <div style={{ width: 28, fontWeight: 800 }}>{idx + 1}</div>
-                                    <div style={{ fontWeight: 700 }}>{r.nickname}</div>
-                                </div>
-
-                                <div style={{ fontSize: 14 }}>
-                                    {tab === "likes" ? `좋아요 ${r.score}` : `완료 ${r.score}`}
-                                </div>
-                            </div>
-                        ))}
+            <div className="comm-ranking-body">
+                <section className="ranking-top-card">
+                    <div className="ranking-title-row">
+                        <div>
+                            <h3 className="ranking-title">멤버 랭킹</h3>
+                            <p className="ranking-subtitle">
+                                그룹 멤버들의 좋아요 / 완료 투두 순위를 확인할 수 있어요.
+                            </p>
+                        </div>
                     </div>
-                )}
+
+                    <div className="ranking-filter-row">
+                        <div className="tab-group">
+                            <button
+                                className={`tab-btn ${tab === "likes" ? "active" : ""}`}
+                                onClick={() => setTab("likes")}
+                                disabled={tab === "likes"}
+                            >
+                                좋아요 랭킹
+                            </button>
+                            <button
+                                className={`tab-btn ${tab === "todos" ? "active" : ""}`}
+                                onClick={() => setTab("todos")}
+                                disabled={tab === "todos"}
+                            >
+                                완료 투두 랭킹
+                            </button>
+                        </div>
+
+                        <select
+                            className="limit-select"
+                            value={limit}
+                            onChange={(e) => setLimit(Number(e.target.value))}
+                        >
+                            {[10, 20, 30, 50].map((n) => (
+                                <option key={n} value={n}>
+                                    TOP {n}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {tab === "todos" && (
+                        <div className="date-filter-row">
+                            <span className="date-label">날짜 선택</span>
+                            <input
+                                className="date-input"
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                            />
+                            <button className="date-reset-btn" onClick={() => setDate("")}>
+                                오늘 기준
+                            </button>
+                        </div>
+                    )}
+                </section>
+
+                <section className="ranking-list-card">
+                    {loading ? (
+                        <div className="empty-state">불러오는 중...</div>
+                    ) : error ? (
+                        <div className="error-state">{error}</div>
+                    ) : rows.length === 0 ? (
+                        <div className="empty-state">데이터 없음</div>
+                    ) : (
+                        <div className="ranking-list">
+                            {rows.map((r, idx) => (
+                                <article key={r.memberId} className="ranking-item">
+                                    <div className="ranking-left">
+                                        <div
+                                            className={`rank-badge ${
+                                                idx === 0
+                                                    ? "gold"
+                                                    : idx === 1
+                                                        ? "silver"
+                                                        : idx === 2
+                                                            ? "bronze"
+                                                            : ""
+                                            }`}
+                                        >
+                                            {idx + 1}
+                                        </div>
+
+                                        <div>
+                                            <div className="member-name">{r.nickname}</div>
+                                            <div className="member-rank-text">
+                                                {idx === 0
+                                                    ? "현재 1위"
+                                                    : `${idx + 1}위 멤버`}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="ranking-score">
+                                        {tab === "likes"
+                                            ? `좋아요 ${r.score}`
+                                            : `완료 ${r.score}`}
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </section>
             </div>
         </div>
     );
