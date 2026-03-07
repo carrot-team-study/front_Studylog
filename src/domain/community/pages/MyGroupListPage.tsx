@@ -1,6 +1,7 @@
+// src/domain/community/pages/MyGroupListPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getData } from "../../../global/api/http";
+import { commApi } from "../api/commApi";
 import type { Page, MyGroupListDto } from "../types/CommGroupType";
 
 export default function MyGroupListPage() {
@@ -16,13 +17,14 @@ export default function MyGroupListPage() {
     const fetchMyGroups = async (nextPage = 0) => {
         setLoading(true);
         setError(null);
+
         try {
-            const result = await getData<Page<MyGroupListDto>>("/api/comm/me/groups", {
-                params: { page: nextPage, size },
-            });
+            // ✅ getData -> commApi
+            const result = await commApi.my.groups(nextPage, size);
+
             setPageData(result);
             setPage(nextPage);
-        } catch (e) {
+        } catch (e: unknown) {
             setError(e instanceof Error ? e.message : "불러오기 실패");
         } finally {
             setLoading(false);
@@ -30,7 +32,7 @@ export default function MyGroupListPage() {
     };
 
     useEffect(() => {
-        fetchMyGroups(0);
+        void fetchMyGroups(0);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -86,13 +88,13 @@ export default function MyGroupListPage() {
 
             {pageData && pageData.totalPages > 1 && (
                 <div style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 16 }}>
-                    <button disabled={pageData.first || loading} onClick={() => fetchMyGroups(page - 1)}>
+                    <button disabled={pageData.first || loading} onClick={() => void fetchMyGroups(page - 1)}>
                         이전
                     </button>
                     <span>
             {pageData.number + 1} / {pageData.totalPages} (총 {pageData.totalElements})
           </span>
-                    <button disabled={pageData.last || loading} onClick={() => fetchMyGroups(page + 1)}>
+                    <button disabled={pageData.last || loading} onClick={() => void fetchMyGroups(page + 1)}>
                         다음
                     </button>
                 </div>

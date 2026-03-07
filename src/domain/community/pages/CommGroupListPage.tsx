@@ -1,8 +1,8 @@
-// domain/community/pages/CommGroupListPage.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getData } from "../../../global/api/http";
+import { commApi } from "../api/commApi";
 import type { Page, GroupListDto, CommGroupSort } from "../types/CommGroupType";
+import type { CommTagDto } from "../types/CommTagType";
 import "../css/CommGroupListPage.css";
 
 function CommGroupListPage() {
@@ -15,16 +15,46 @@ function CommGroupListPage() {
     const [page, setPage] = useState(0);
     const [size] = useState(20);
 
+    const [tags, setTags] = useState<CommTagDto[]>([]);
+    const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+
+    const normalizedTags = useMemo(
+        () =>
+            tags
+                .map((t) => ({
+                    tagId: t.tagId,
+                    tagName: (t.tagName ?? "").toString(),
+                }))
+                .filter((t) => t.tagName.trim().length > 0),
+        [tags]
+    );
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const list = await commApi.tag.list();
+                setTags(list);
+            } catch {
+                setTags([]);
+            }
+        })();
+    }, []);
+
     const fetchGroups = async (nextPage = 0) => {
         setLoading(true);
         setError(null);
         try {
-            const result = await getData<Page<GroupListDto>>("/api/comm", {
-                params: { keyword: keyword.trim() || undefined, order, page: nextPage, size },
+            const result = await commApi.group.list({
+                keyword: keyword.trim() || undefined,
+                order,
+                page: nextPage,
+                size,
+                tagIds: selectedTagIds.length ? selectedTagIds : undefined,
             });
+
             setPageData(result);
             setPage(nextPage);
-        } catch (e) {
+        } catch (e: unknown) {
             setError(e instanceof Error ? e.message : "알 수 없는 오류 발생");
         } finally {
             setLoading(false);
@@ -32,9 +62,28 @@ function CommGroupListPage() {
     };
 
     useEffect(() => {
-        fetchGroups(0);
+        void fetchGroups(0);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const onSearch = () => void fetchGroups(0);
+
+    const toggleTag = (tagId: number) => {
+        setSelectedTagIds((prev) =>
+            prev.includes(tagId) ? prev.filter((x) => x !== tagId) : [...prev, tagId]
+        );
+    };
+
+    useEffect(() => {
+        void fetchGroups(0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [order, selectedTagIds]);
+
+    const clearTags = () => setSelectedTagIds([]);
+
+    const goDetail = (groupId: number) => {
+        navigate(`/groups/${groupId}`);
+    };
 
     if (loading && !pageData) {
         return (
@@ -76,21 +125,63 @@ function CommGroupListPage() {
             </header>
 
             <div className="comm-body">
+                <div style={{ marginBottom: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                        <div style={{ fontSize: 13, opacity: 0.8 }}>태그 필터</div>
+                        <button onClick={clearTags} disabled={selectedTagIds.length === 0}>
+                            태그 초기화
+                        </button>
+                    </div>
+
+                    {normalizedTags.length === 0 ? (
+                        <div style={{ opacity: 0.6 }}>태그 없음</div>
+                    ) : (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                            {normalizedTags.map((t) => {
+                                const active = selectedTagIds.includes(t.tagId);
+                                return (
+                                    <button
+                                        key={t.tagId}
+                                        onClick={() => toggleTag(t.tagId)}
+                                        style={{
+                                            padding: "6px 10px",
+                                            borderRadius: 999,
+                                            border: "1px solid #ddd",
+                                            background: active ? "#111" : "#fff",
+                                            color: active ? "#fff" : "#111",
+                                            fontSize: 13,
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        #{t.tagName}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+
                 <div className="search-bar">
                     <input
                         className="search-input"
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
                         placeholder="키워드 검색"
-                        onKeyDown={(e) => e.key === "Enter" && fetchGroups(0)}
+                        onKeyDown={(e) => e.key === "Enter" && onSearch()}
                     />
-                    <select className="sort-select" value={order} onChange={(e) => setOrder(e.target.value as CommGroupSort)}>
+                    <select
+                        className="sort-select"
+                        value={order}
+                        onChange={(e) => setOrder(e.target.value as CommGroupSort)}
+                    >
                         <option value="NEW">최신순</option>
                         <option value="OLD">오래된순</option>
                         <option value="GOAL_DESC">목표량순</option>
                         <option value="MEMBERS_DESC">인원많은순</option>
                     </select>
-                    <button className="search-btn" onClick={() => fetchGroups(0)} disabled={loading}>검색</button>
+                    <button className="search-btn" onClick={onSearch} disabled={loading}>
+                        검색
+                    </button>
                 </div>
 
                 {loading && pageData && <p className="loading-inline">로딩 중...</p>}
@@ -100,7 +191,11 @@ function CommGroupListPage() {
                 ) : (
                     <div className="group-list">
                         {items.map((g) => (
-                            <button key={g.groupId} className="group-card" onClick={() => navigate(`/groups/${g.groupId}`)}>
+                            <button
+                                key={g.groupId}
+                                className="group-card"
+                                onClick={() => goDetail(g.groupId)}
+                            >
                                 <p className="group-name">{g.groupName}</p>
                                 <p className="group-meta">
                                     멤버 {g.memberCount} · {new Date(g.createdAt).toLocaleDateString()}
@@ -112,9 +207,23 @@ function CommGroupListPage() {
 
                 {pageData && pageData.totalPages > 0 && (
                     <div className="pagination">
-                        <button className="page-btn" disabled={pageData.first || loading} onClick={() => fetchGroups(page - 1)}>이전</button>
-                        <span className="page-info">{pageData.number + 1} / {pageData.totalPages} (총 {pageData.totalElements})</span>
-                        <button className="page-btn" disabled={pageData.last || loading} onClick={() => fetchGroups(page + 1)}>다음</button>
+                        <button
+                            className="page-btn"
+                            disabled={pageData.first || loading}
+                            onClick={() => void fetchGroups(page - 1)}
+                        >
+                            이전
+                        </button>
+                        <span className="page-info">
+                            {pageData.number + 1} / {pageData.totalPages} (총 {pageData.totalElements})
+                        </span>
+                        <button
+                            className="page-btn"
+                            disabled={pageData.last || loading}
+                            onClick={() => void fetchGroups(page + 1)}
+                        >
+                            다음
+                        </button>
                     </div>
                 )}
             </div>

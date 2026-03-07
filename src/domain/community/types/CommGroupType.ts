@@ -24,20 +24,17 @@ export type Page<T> = {
     last: boolean;
 };
 
+// src/domain/community/types/CommGroupType.ts
 export type CommGroupDetailResponse = {
     groupId: number;
     groupName: string;
-    groupIntro?: string;
-    dailyGoal?: number;
+    groupIntro?: string | null;
+    dailyGoal?: number | null;
     maxUser: number;
     memberCount: number;
     createdAt: string;
 
-    // 태그가 내려오면 이런식 (너 실제 응답에 맞춰 수정)
-    tags?: { tagId: number; tagName: string }[];
-
-    // 비공개 여부 같은 값이 있으면 추가
-    // isPrivate?: boolean;
+    tagIds?: number[]; // ✅ 서버가 실제로 주는 형태
 };
 
 // domain/community/types/CommGroupType.ts

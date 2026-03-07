@@ -1,14 +1,10 @@
+// src/domain/community/pages/CommGroupRankingPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getData } from "../../../global/api/http";
+import { commApi } from "../api/commApi";
 import type { RankRowDto } from "../types/CommGroupType";
 
 type Tab = "likes" | "todos";
-
-type RankingParams = {
-    limit: number;
-    date?: string;
-};
 
 export default function CommGroupRankingPage() {
     const { groupId } = useParams<{ groupId: string }>();
@@ -34,15 +30,17 @@ export default function CommGroupRankingPage() {
         setError(null);
 
         try {
-            const url =
+            const params = {
+                limit,
+                ...(tab === "todos" && date.trim() ? { date: date.trim() } : {}),
+            };
+
+            // ✅ getData(url) -> commApi.ranking.*
+            const data =
                 tab === "likes"
-                    ? `/api/comm/${gid}/rankings/likes`
-                    : `/api/comm/${gid}/rankings/todos`;
+                    ? await commApi.ranking.likes(gid, params)
+                    : await commApi.ranking.todos(gid, params);
 
-            const params: RankingParams = { limit };
-            if (tab === "todos" && date.trim()) params.date = date.trim();
-
-            const data = await getData<RankRowDto[]>(url, { params });
             setRows(data);
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "랭킹 불러오기 실패");
