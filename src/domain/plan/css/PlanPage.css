@@ -276,3 +276,170 @@
 .modal-submit-btn:hover {
   background: #5a6fd6;
 }
+
+/* 뷰 토글 */
+.view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: white;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggle-btn.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+/* 타임테이블 */
+.timetable-container {
+  overflow-y: auto;
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.timetable-grid {
+  display: flex;
+  position: relative;
+}
+
+.timetable-labels {
+  display: flex;
+  flex-direction: column;
+  width: 52px;
+  flex-shrink: 0;
+}
+
+.timetable-label {
+  display: flex;
+  align-items: flex-start;
+  font-size: 11px;
+  color: #9ca3af;
+  padding-top: 2px;
+  box-sizing: border-box;
+}
+
+.timetable-events {
+  position: relative;
+  flex: 1;
+}
+
+.timetable-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #f3f4f6;
+}
+
+.timetable-block {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  background: #667eea;
+  border-radius: 8px;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.timetable-block-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+}
+
+.timetable-block-time {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* TimePicker */
+.time-picker {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.ampm-toggle {
+  display: flex;
+}
+
+.ampm-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ampm-btn.active {
+  background: #667eea;
+  color: white;
+}
+
+.time-scroll-row {
+  display: flex;
+  height: 180px;
+}
+
+.time-scroll-col {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.time-scroll-divider {
+  width: 1px;
+  background: #e5e7eb;
+  margin: 8px 0;
+}
+
+.time-scroll-cell {
+  padding: 10px 0;
+  border: none;
+  background: transparent;
+  color: #374151;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.time-scroll-cell:hover {
+  background: #e0e7ff;
+  color: #667eea;
+}
+
+.time-scroll-cell.active {
+  background: #667eea;
+  color: white;
+  font-weight: 700;
+}
+
+.time-scroll-cell.disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+}
