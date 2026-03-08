@@ -1,6 +1,6 @@
 // src/pages/MainPage.tsx
 import { useEffect, useRef, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { tokenStorage } from '../domain/member/api/memberApi';
 import { notificationApi } from '../domain/notification/api/notificationApi';
 import NotificationModal from '../domain/notification/components/NotificationModal';
@@ -112,21 +112,21 @@ function MainPage() {
             <p>공부 시간을 측정하세요</p>
           </div>
         </div>
-        <NavLink to="/subjects" className="feature-card">
+        <div className="feature-card" onClick={() => navigate('/subjects')} style={{ cursor: 'pointer' }}>
           <div className="feature-icon">📚</div>
           <h3>과목 관리</h3>
           <p>과목을 추가하고 관리하세요</p>
-        </NavLink>
-        <NavLink to="/plans" className="feature-card">
+        </div>
+        <div className="feature-card" onClick={() => navigate('/plans')} style={{ cursor: 'pointer' }}>
           <div className="feature-icon">📅</div>
           <h3>플래너</h3>
           <p>학습 계획을 세우세요</p>
-        </NavLink>
-        <NavLink to="/statistics" className="feature-card">
+        </div>
+        <div className="feature-card" onClick={() => navigate('/statistics')} style={{ cursor: 'pointer' }}>
           <div className="feature-icon">📊</div>
           <h3>통계</h3>
           <p>학습 기록을 확인하세요</p>
-        </NavLink>
+        </div>
         <div className="feature-card" onClick={() => setNotifOpen(true)} style={{ cursor: 'pointer' }}>
           <div className="feature-icon">🔔</div>
           <h3>알림</h3>

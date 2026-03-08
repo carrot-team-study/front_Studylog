@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { planApi } from '../api/planApi';
 import type { Plan } from '../types/plan.ts';
 import '../css/PlanPage.css';
+import TimeTable from "../components/TimeTable.tsx";
+import TimePicker from "../components/TimePicker.tsx";
 
 const PlanPage = () => {
     const navigate = useNavigate();
@@ -16,6 +18,7 @@ const PlanPage = () => {
     const [content, setContent] = useState('');
     const [startTime, setStartTime] = useState('09:00');
     const [endTime, setEndTime] = useState('10:00');
+    const [viewMode, setViewMode] = useState<'list' | 'timetable'>('list');
 
     const fetchPlans = async (date: string) => {
         try {
@@ -103,11 +106,22 @@ const PlanPage = () => {
                     </button>
                 </div>
 
+                <div className="view-toggle">
+                    <button
+                        className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                        onClick={() => setViewMode('list')}
+                    >목록</button>
+                    <button
+                        className={`toggle-btn ${viewMode === 'timetable' ? 'active' : ''}`}
+                        onClick={() => setViewMode('timetable')}
+                    >타임테이블</button>
+                </div>
+
                 {loading ? (
                     <div className="empty-state">불러오는 중...</div>
                 ) : plans.length === 0 ? (
                     <div className="empty-state">등록된 계획이 없습니다.</div>
-                ) : (
+                ) : viewMode === 'list' ? (
                     <div className="plan-list">
                         {plans.map((plan) => (
                             <div key={plan.planId} className="plan-item">
@@ -123,6 +137,8 @@ const PlanPage = () => {
                             </div>
                         ))}
                     </div>
+                ) : (
+                    <TimeTable plans={plans} />
                 )}
             </div>
 
@@ -154,11 +170,11 @@ const PlanPage = () => {
                             <div className="time-row">
                                 <div className="form-group">
                                     <label className="form-label">시작 시간</label>
-                                    <input className="form-input" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                                    <TimePicker value={startTime} onChange={setStartTime} />
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">종료 시간</label>
-                                    <input className="form-input" type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+                                    <TimePicker value={endTime} onChange={setEndTime} minTime={startTime} />
                                 </div>
                             </div>
                             <div className="modal-actions">

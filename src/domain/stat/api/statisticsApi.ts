@@ -5,6 +5,18 @@ import type {Stat} from "../types/statistics.ts";
 const BASE_URL = '/api/statistics';
 
 export const statisticsApi = {
+    // 특정 날짜 과목별 통계
+    getDailyStats: async (date: string): Promise<Stat> => {
+        const token = tokenStorage.getAccessToken();
+        const response = await fetch(`${BASE_URL}/daily?date=${date}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (!response.ok) throw new Error('일간 통계 조회 실패');
+        return response.json();
+    },
+
     // 주간 통계
     getWeekly: async (weekStart: string): Promise<Stat> => {
         const token = tokenStorage.getAccessToken();
