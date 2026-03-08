@@ -117,7 +117,7 @@ export default function CommGroupDetailPage() {
 
         (async () => {
             try {
-                const list = await commApi.member.list(gid);
+                const list = await commApi.member.list(gid, { silent: true });
                 setMembers(list);
 
                 if (myId != null) {
@@ -151,7 +151,7 @@ export default function CommGroupDetailPage() {
         setMemberError(null);
 
         try {
-            const list = await commApi.member.list(gid);
+            const list = await commApi.member.list(gid, { silent: true });
             setMembers(list);
 
             if (myId != null) {
@@ -346,11 +346,6 @@ export default function CommGroupDetailPage() {
                     </div>
 
                     <div className="info-grid">
-                        {/*<div className="info-box">*/}
-                        {/*    <div className="info-label">그룹 ID</div>*/}
-                        {/*    <div className="info-value">{detail.groupId}</div>*/}
-                        {/*</div>*/}
-
                         {"maxUser" in detail && (
                             <div className="info-box">
                                 <div className="info-label">정원</div>
